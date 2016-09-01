@@ -5,6 +5,9 @@
     <inherits name='com.google.gwt.user.User'/>
     <inherits name="com.google.gwt.user.theme.standard.Standard"/>
 
+    <source path="client"/>
+    <source path="server"/>
+
     <entry-point class='com.epam.ali.gwt.sample.stockwatcher.client.StockWatcher'/>
 
 </module>
