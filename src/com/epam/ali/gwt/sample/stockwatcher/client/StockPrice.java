@@ -1,6 +1,8 @@
 package com.epam.ali.gwt.sample.stockwatcher.client;
 
-public class StockPrice {
+import java.io.Serializable;
+
+public class StockPrice implements Serializable {
     private String symbol;
     private double price;
     private double change;
