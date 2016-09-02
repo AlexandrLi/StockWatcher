@@ -1,8 +1,8 @@
 package com.epam.ali.gwt.sample.stockwatcher.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.*;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
@@ -20,16 +20,21 @@ public class StockWatcher implements EntryPoint {
     private FlexTable stocksFlexTable = new FlexTable();
     private HorizontalPanel addPanel = new HorizontalPanel();
     private TextBox newSymbolTextBox = new TextBox();
-    private Button addStockButton = new Button("Add");
+    private Button addStockButton;
     private Label lastUpdateLabel = new Label();
     private List<String> stocks = new ArrayList<String>();
+    private StockWatcherConstants constants = GWT.create(StockWatcherConstants.class);
+    private StockWatcherMessages messages = GWT.create(StockWatcherMessages.class);
 
 
     public void onModuleLoad() {
-        stocksFlexTable.setText(0, 0, "Symbol");
-        stocksFlexTable.setText(0, 1, "Price");
-        stocksFlexTable.setText(0, 2, "Change");
-        stocksFlexTable.setText(0, 3, "Remove");
+        Window.setTitle(constants.stockWatcher());
+        RootPanel.get("appTitle").add(new Label(constants.stockWatcher()));
+
+        stocksFlexTable.setText(0, 0, constants.symbol());
+        stocksFlexTable.setText(0, 1, constants.price());
+        stocksFlexTable.setText(0, 2, constants.change());
+        stocksFlexTable.setText(0, 3, constants.remove());
 
         stocksFlexTable.setCellPadding(6);
         stocksFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
@@ -38,6 +43,7 @@ public class StockWatcher implements EntryPoint {
         stocksFlexTable.getCellFormatter().addStyleName(0, 2, "watchListNumericColumn");
         stocksFlexTable.getCellFormatter().addStyleName(0, 3, "watchListRemoveColumn");
 
+        addStockButton = new Button(constants.add());
         addPanel.add(newSymbolTextBox);
         addPanel.add(addStockButton);
         addPanel.addStyleName("addPanel");
@@ -80,12 +86,13 @@ public class StockWatcher implements EntryPoint {
         newSymbolTextBox.setFocus(true);
 
         if (!symbol.matches("[0-9A-Z\\\\.]{1,10}$")) {
-            Window.alert("'" + symbol + "' is not valid");
+            Window.alert(messages.invalidSymbol(symbol));
             newSymbolTextBox.selectAll();
             return;
         }
         if (stocks.contains(symbol)) {
-            Window.alert("'" + symbol + "' already exists");
+            Window.alert(messages.alreadyExists(symbol));
+            newSymbolTextBox.selectAll();
             return;
         }
         int row = stocksFlexTable.getRowCount();
@@ -123,11 +130,10 @@ public class StockWatcher implements EntryPoint {
     }
 
     private void updateTable(StockPrice[] prices) {
-        for (int i = 0; i < prices.length; i++) {
-            updateTable(prices[i]);
+        for (StockPrice price : prices) {
+            updateTable(price);
         }
-        DateTimeFormat dateFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
-        lastUpdateLabel.setText("Last update: " + dateFormat.format(new Date()));
+        lastUpdateLabel.setText(messages.lastUpdate(new Date()));
     }
 
     private void updateTable(StockPrice price) {

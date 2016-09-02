@@ -9,5 +9,5 @@
     <source path="server"/>
 
     <entry-point class='com.epam.ali.gwt.sample.stockwatcher.client.StockWatcher'/>
-
+    <extend-property name="locale" values="ru"/>
 </module>
