@@ -4,9 +4,9 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ public class StockWatcher implements EntryPoint {
     private List<String> stocks = new ArrayList<String>();
     private StockWatcherConstants constants = GWT.create(StockWatcherConstants.class);
     private StockWatcherMessages messages = GWT.create(StockWatcherMessages.class);
+    private StockPriceServiceAsync stockPriceService = GWT.create(StockPriceService.class);
 
 
     public void onModuleLoad() {
@@ -118,15 +119,21 @@ public class StockWatcher implements EntryPoint {
     }
 
     private void refreshWatchList() {
-        final double MAX_PRICE = 100.0;
-        final double MAX_PRICE_CHANGE = 0.02;
-        StockPrice[] prices = new StockPrice[stocks.size()];
-        for (int i = 0; i < stocks.size(); i++) {
-            double price = Random.nextDouble() * MAX_PRICE;
-            double change = price * MAX_PRICE_CHANGE * (Random.nextDouble() * 2.0 - 1.0);
-            prices[i] = new StockPrice(stocks.get(i), price, change);
+        if (stockPriceService == null) {
+            stockPriceService = GWT.create(StockPriceService.class);
         }
-        updateTable(prices);
+        AsyncCallback<StockPrice[]> callback = new AsyncCallback<StockPrice[]>() {
+            @Override
+            public void onFailure(Throwable caught) {
+
+            }
+
+            @Override
+            public void onSuccess(StockPrice[] result) {
+                updateTable(result);
+            }
+        };
+        stockPriceService.getPrices(stocks.toArray(new String[0]), callback);
     }
 
     private void updateTable(StockPrice[] prices) {
