@@ -22,6 +22,7 @@ public class StockWatcher implements EntryPoint {
     private TextBox newSymbolTextBox = new TextBox();
     private Button addStockButton;
     private Label lastUpdateLabel = new Label();
+    private Label errorMsgLabel = new Label();
     private List<String> stocks = new ArrayList<String>();
     private StockWatcherConstants constants = GWT.create(StockWatcherConstants.class);
     private StockWatcherMessages messages = GWT.create(StockWatcherMessages.class);
@@ -49,6 +50,10 @@ public class StockWatcher implements EntryPoint {
         addPanel.add(addStockButton);
         addPanel.addStyleName("addPanel");
 
+        errorMsgLabel.setStyleName("errorMessage");
+        errorMsgLabel.setVisible(false);
+
+        mainPanel.add(errorMsgLabel);
         mainPanel.add(stocksFlexTable);
         mainPanel.add(addPanel);
         mainPanel.add(lastUpdateLabel);
@@ -125,7 +130,12 @@ public class StockWatcher implements EntryPoint {
         AsyncCallback<StockPrice[]> callback = new AsyncCallback<StockPrice[]>() {
             @Override
             public void onFailure(Throwable caught) {
-
+                String details = caught.getMessage();
+                if (caught instanceof DelistedException) {
+                    details = "Company '" + ((DelistedException) caught).getSymbol() + "' was delisted";
+                }
+                errorMsgLabel.setText(details);
+                errorMsgLabel.setVisible(true);
             }
 
             @Override
@@ -141,6 +151,7 @@ public class StockWatcher implements EntryPoint {
             updateTable(price);
         }
         lastUpdateLabel.setText(messages.lastUpdate(new Date()));
+        errorMsgLabel.setVisible(false);
     }
 
     private void updateTable(StockPrice price) {
