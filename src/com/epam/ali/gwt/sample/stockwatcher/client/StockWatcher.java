@@ -2,20 +2,24 @@ package com.epam.ali.gwt.sample.stockwatcher.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.http.client.*;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class StockWatcher implements EntryPoint {
 
     private static final int REFRESH_INTERVAL = 3000;
+    private static final String JSON_URL = GWT.getModuleBaseURL() + "json?symbols=";
     private VerticalPanel mainPanel = new VerticalPanel();
     private FlexTable stocksFlexTable = new FlexTable();
     private HorizontalPanel addPanel = new HorizontalPanel();
@@ -124,37 +128,58 @@ public class StockWatcher implements EntryPoint {
     }
 
     private void refreshWatchList() {
-        if (stockPriceService == null) {
-            stockPriceService = GWT.create(StockPriceService.class);
+        if (stocks.size() == 0) {
+            return;
         }
-        AsyncCallback<StockPrice[]> callback = new AsyncCallback<StockPrice[]>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                String details = caught.getMessage();
-                if (caught instanceof DelistedException) {
-                    details = "Company '" + ((DelistedException) caught).getSymbol() + "' was delisted";
-                }
-                errorMsgLabel.setText(details);
-                errorMsgLabel.setVisible(true);
-            }
+        String url = JSON_URL;
 
-            @Override
-            public void onSuccess(StockPrice[] result) {
-                updateTable(result);
+        Iterator<String> iter = stocks.iterator();
+        while (iter.hasNext()) {
+            url += iter.next();
+            if (iter.hasNext()) {
+                url += "+";
             }
-        };
-        stockPriceService.getPrices(stocks.toArray(new String[0]), callback);
+        }
+        url = URL.encode(url);
+
+        RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+        try {
+
+
+            Request request = builder.sendRequest(null, new RequestCallback() {
+                @Override
+                public void onResponseReceived(Request request, Response response) {
+                    if (response.getStatusCode() == 200) {
+                        updateTable(JsonUtils.<JsArray<StockData>>safeEval(response.getText()));
+                    } else {
+                        displayError("Couldn't retrieve JSON (" + response.getStatusText() + ")");
+                    }
+                }
+
+                @Override
+                public void onError(Request request, Throwable exception) {
+
+                }
+            });
+        } catch (RequestException e) {
+            displayError("Couldn't retrieve JSON");
+        }
     }
 
-    private void updateTable(StockPrice[] prices) {
-        for (StockPrice price : prices) {
-            updateTable(price);
+    private void displayError(String error) {
+        errorMsgLabel.setText("Error: "+error);
+        errorMsgLabel.setVisible(true);
+    }
+
+    private void updateTable(JsArray<StockData> prices) {
+        for (int i = 0; i < prices.length(); i++) {
+            updateTable(prices.get(i));
         }
         lastUpdateLabel.setText(messages.lastUpdate(new Date()));
         errorMsgLabel.setVisible(false);
     }
 
-    private void updateTable(StockPrice price) {
+    private void updateTable(StockData price) {
         if (!stocks.contains(price.getSymbol())) {
             return;
         }
