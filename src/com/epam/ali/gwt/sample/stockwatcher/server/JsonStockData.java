@@ -22,6 +22,7 @@ public class JsonStockData extends HttpServlet {
 
         String[] stockSymbols = req.getParameter("symbols").split(" ");
         boolean firstSymbol = true;
+        out.println('[');
         for (String stockSymbol : stockSymbols) {
             double price = random.nextDouble() * MAX_PRICE;
             double change = price * MAX_PRICE_CHANGE * (random.nextDouble() * 2.0 - 1.0);
