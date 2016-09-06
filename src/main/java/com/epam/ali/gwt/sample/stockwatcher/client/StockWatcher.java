@@ -1,5 +1,8 @@
 package com.epam.ali.gwt.sample.stockwatcher.client;
 
+import com.epam.ali.gwt.sample.stockwatcher.client.i18n.StockWatcherConstants;
+import com.epam.ali.gwt.sample.stockwatcher.client.model.StockData;
+import com.epam.ali.gwt.sample.stockwatcher.client.view.StockWatcherView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -16,7 +19,6 @@ public class StockWatcher implements EntryPoint {
     private static final int REFRESH_INTERVAL = 3000;
     private static final String JSON_URL = GWT.getModuleBaseURL() + "json?symbols=";
     private StockWatcherConstants constants = GWT.create(StockWatcherConstants.class);
-    private StockPriceServiceAsync stockPriceService = GWT.create(StockPriceService.class);
     private StockWatcherView stockWatcher = new StockWatcherView();
 
 

@@ -7,16 +7,6 @@
         <welcome-file>StockWatcher.html</welcome-file>
     </welcome-file-list>
     <servlet>
-        <servlet-name>StockPriceServiceImpl</servlet-name>
-        <servlet-class>com.epam.ali.gwt.sample.stockwatcher.server.StockPriceServiceImpl</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>StockPriceServiceImpl</servlet-name>
-        <url-pattern>/StockWatcher/stockPrices</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
         <servlet-name>JsonStockData</servlet-name>
         <servlet-class>com.epam.ali.gwt.sample.stockwatcher.server.JsonStockData</servlet-class>
     </servlet>
