@@ -1,0 +1,17 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+    <ui:style src="StockWatcher.css"/>
+    <ui:with field="res" type="com.epam.ali.gwt.sample.stockwatcher.client.StockWatcherConstants"/>
+    <g:HTMLPanel>
+        <g:Label ui:field="title"/>
+        <g:VerticalPanel ui:field="mainPanel">
+            <g:Label styleName="errorMessage" ui:field="errorMsgLabel" visible="false"/>
+            <g:FlexTable cellPadding="6" ui:field="stocksFlexTable"/>
+            <g:HorizontalPanel styleName="addPanel" ui:field="addPanel">
+                <g:TextBox ui:field="newSymbolTextBox" focus="true"/>
+                <g:Button ui:field="addStockButton"/>
+            </g:HorizontalPanel>
+            <g:Label ui:field="lastUpdateLabel"/>
+        </g:VerticalPanel>
+    </g:HTMLPanel>
+</ui:UiBinder>
