@@ -12,7 +12,7 @@ public class StockWatcher implements EntryPoint {
     private static final int REFRESH_INTERVAL = 3000;
     private StockWatcherConstants constants = GWT.create(StockWatcherConstants.class);
     private StockPriceServiceAsync stockPriceService = GWT.create(StockPriceService.class);
-    private StockWatcherUI stockWatcher = new StockWatcherUI();
+    private StockWatcherView stockWatcher = new StockWatcherView();
 
 
     public void onModuleLoad() {
