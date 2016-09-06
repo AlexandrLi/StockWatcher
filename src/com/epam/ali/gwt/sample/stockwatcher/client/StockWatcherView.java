@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StockWatcherUI extends Composite {
-    private static StockWatcherUIUiBinder ourUiBinder = GWT.create(StockWatcherUIUiBinder.class);
+public class StockWatcherView extends Composite {
+    private static StockWatcherViewUiBinder ourUiBinder = GWT.create(StockWatcherViewUiBinder.class);
     @UiField
     VerticalPanel mainPanel;
     @UiField
@@ -38,7 +38,7 @@ public class StockWatcherUI extends Composite {
     private StockWatcherConstants constants = GWT.create(StockWatcherConstants.class);
     private StockWatcherMessages messages = GWT.create(StockWatcherMessages.class);
 
-    public StockWatcherUI() {
+    public StockWatcherView() {
         initWidget(ourUiBinder.createAndBindUi(this));
         title.setText(constants.stockWatcher());
         initFlexTable();
@@ -155,6 +155,6 @@ public class StockWatcherUI extends Composite {
         changeWidget.setStyleName(changeStyleName);
     }
 
-    interface StockWatcherUIUiBinder extends UiBinder<HTMLPanel, StockWatcherUI> {
+    interface StockWatcherViewUiBinder extends UiBinder<HTMLPanel, StockWatcherView> {
     }
 }
